@@ -1,0 +1,8 @@
+{
+  "name": "Amp Rack",
+  "description": "Guitar and audio effects processor and rack with customizable effect chains, drum machine, presets, and audio tools",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

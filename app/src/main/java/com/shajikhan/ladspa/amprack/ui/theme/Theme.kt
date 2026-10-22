@@ -1,62 +1,61 @@
 package com.shajikhan.ladspa.amprack.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = Blue40,
+    secondary = ThemeModernAccent,
+    tertiary = Orange40,
+    background = DarkBackground,
+    surface = DarkSurface,
+    surfaceVariant = DarkSurfaceVariant,
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    onBackground = Color(0xFFE5E6EE),
+    onSurface = Color(0xFFE5E6EE),
+    onSurfaceVariant = Color(0xFFB0B4C6)
 )
+
+enum class AppTheme(val displayName: String, val accentColor: Color, val cardColor: Color) {
+    MODERN("Modern", ThemeModernAccent, Color(0xFF1E212B)),
+    TUBE_AMP("TubeAmp", ThemeTubeAmpAccent, Color(0xFF261D16)),
+    CLASSIC("Classic", ThemeClassicAccent, Color(0xFF231E1E)),
+    ANALOG("Analog", ThemeAnalogAccent, Color(0xFF152220)),
+    HYBRID("Hybrid", ThemeHybridAccent, Color(0xFF231828)),
+    ADWAITA("Adwaita", ThemeAdwaitaAccent, Color(0xFF1E242B))
+}
 
 @Composable
 fun AmpRackTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    selectedTheme: AppTheme = AppTheme.MODERN,
+    darkTheme: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = DarkColorScheme.copy(
+        primary = selectedTheme.accentColor,
+        secondary = selectedTheme.accentColor,
+        surface = selectedTheme.cardColor
+    )
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
-            (view.context as Activity).window.statusBarColor = colorScheme.primary.toArgb()
-            ViewCompat.getWindowInsetsController(view)?.isAppearanceLightStatusBars = darkTheme
+            val window = (view.context as? Activity)?.window
+            if (window != null) {
+                window.statusBarColor = DarkBackground.toArgb()
+                window.navigationBarColor = DarkBackground.toArgb()
+                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            }
         }
     }
 
